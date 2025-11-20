@@ -1,0 +1,36 @@
+build:
+  - "make"
+run:
+  - "./a.out"
+comments:
+  single: "//"
+  multiline:
+    - "/*"
+    - "*/"
+wordlists:
+  variable: ./path/to/list
+  # Can also be just the name, in that case the tool looks for it in ~/.local/share/asteroid
+  # You can specify a different list for each variable this way
+expected_output_format:
+  # If nothing is specifyed here, asteroid defaults to an empty stdout as success
+  output_name: {
+    type: "stdout",
+    format: "formatted string",
+    # For example, "(( The sum of squares of %int% and %int% is: %int% ))" will just look for
+    # a place in the output that matches the string between parentheses and where the '%int%'
+    # are replaced by an integer value. If '%%' is given, then it matches anything regardless
+    # of types. Whitespaces between sequenced type indicators are ignored ('%int% %string%'
+    # is the same thing as '%int%%string%' but the former is used to avoid parsing errors).
+    # This is also the same 'templating language' used for the variables in source code files
+    # except that you can specify a variable name after the parentheses with '{varname}' in
+    # order to be able to give a specific wordlist to a specific variable (see above)
+  }
+  other_output: {
+    type: "file",
+    path: ./path/to/file,
+    format: "(( The dog %string% ))",
+    # 'The dog barked', 'The dog ate' would be valid results (ie. test successes)
+    # The point is to make sure the invariants of the expected results don't change
+    # and the variants are of the correct type
+  }
+
