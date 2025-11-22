@@ -5,10 +5,9 @@ object parseUtils:
   // Remove spaces from a string
   def clean(str: String) = str.filter(x => x != ' ')
   // Removes all lines that don't start with **at least** n indentations
-  def filterByIndent(str: String, n: Int) = {
-    val lines: Array[String] = str.split("\n")
+  def filterByIndent(lines: Array[String], n: Int) = {
     val space: String = " "
-    str.filter(x => x.startsWith(space*n))
+    lines.filter(x => x.startsWith(space*n))
   }
   // Remove leading dashes (for yaml list element) and leading white spaces (indentation)
   def removeLeadingChars(str: String) = str.filter(s => s.startsWith(space*2)).map(c => c.filter(c => c != '-' && c != ' '))
@@ -26,6 +25,15 @@ type Node[A] = Scalar | Mapping[A] | List[A]
 // because they do not serve the use case, but mappings of mappings are
 case class Yaml(nodesList: List[Node[Any]], filename: String) {
   
+  // Receives lines of a block and returns all lines that have the same as 
+  // or higher indentation than the first string of the array
+  def parseBlock(block: String): Array[String] = {
+    def countIndent(str: String) = for chr <- str if chr == ' ' do i=i+1; i
+    val lines: Array[String] = block.split("\n")
+    val firstIndent = countIndent(lines(0))
+    parseUtils.filterByIndent(lines, firstIndent)
+  }
+
   def parseIntScalar(str: String): Option[Int] = {
     try
       Some(Integer.parseInt(str.trim))
