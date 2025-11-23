@@ -11,6 +11,13 @@ object parseUtils:
     lines.filter(x => x.startsWith(space*n))
   }
 
+  // Removes all lines starting with a '#' from a string
+  def removeComments(str: String) = {
+    var lines = str.split("\n")
+    lines = lines.filter(x => !(x.startsWith("#"))).map(y => y ++ "\n")
+    lines.mkString
+  }
+
   // Remove leading dashes (for yaml list element) and leading white spaces (indentation)
   def removeLeadingChars(str: String) = str.filter(s => s.startsWith(space*2)).map(c => c.filter(c => c != '-' && c != ' '))
   def extractString(str: String) = {
@@ -26,10 +33,10 @@ end parseUtils
 // Defining the grammar used to parse the yaml config file
 type Scalar = String | Int
 type Mapping[A] = Map[Scalar, Node[A]]
-type Node[A] = Scalar | Mapping[A] | Array[A]
+type Node[A] = Scalar | Mapping[A] | Array[Scalar]
 
-//
-case class Yaml() {
+// 
+object yamlParser {
   
   // Receives lines of a block and returns all lines that have the same as 
   // or higher indentation than the first string of the array
@@ -57,7 +64,41 @@ case class Yaml() {
     }
   }
 
-  def parseMapping(str: String): Option[Mapping[Any]] = {}
+  // Receives a string, for each line on the same indentation as the
+  // first line, takes the string before the column as the key then
+  // sends the rest (whether a block or a value right after the column)
+  // to the list and scalar parsers to attach their result to the value,
+  // if both fail then returns None
+  def parseMapping(str: String): Option[Mapping[Any]] = {
+    def countIndent(str: String) = for chr <- str if chr == ' ' do i=i+1; i
+    val lines = str.split("\n")
+    val filteredLines = parseBlock(lines)   
+    var finalMapping: Mapping[Any] = Map()
+    var i = 0
+    for line <- filteredLines
+      if(countIndent(line) == countIndent(filteredLine(0)))
+    do
+      line = parseUtils.clean(line)
+      var lineParts = line.split(":")
+      if(lineParts.size == 1) {
+        val valueBlock = filteredLines.slice(i+1, filteredLines.size-1)
+        // Try passing the block to the list and mapping parsers
+        parseList(valueBlock.mkString) match {
+          case Some(list) => finalMapping += (lineParts(0), list)
+          case None => parseMapping(valueBlock.mkString) match {
+            case Some(mapping) => finalMapping += (lineParts(0), mapping)
+            case None => None
+          }
+        }
+      } else {
+        parseScalar(lineParts(1)) match {
+          case Some(value) => finalMapping += (lineParts(0), value)
+          case None => None
+        }
+      }
+      i = i + 1
+    Some(finalMapping)
+  }
 
   // Receives a yaml block and tries to parse it into a list
   // If it is not a valid yaml list, returns None, otherwise returns
