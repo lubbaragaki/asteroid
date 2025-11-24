@@ -1,4 +1,4 @@
-scalaVersion := "2.13.17"
+scalaVersion := "3.3.7"
 version := "1.12.0"
 name := "asteroid"
 libraryDependencies ++= Seq(

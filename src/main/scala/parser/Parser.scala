@@ -19,7 +19,13 @@ object parseUtils:
   }
 
   // Remove leading dashes (for yaml list element) and leading white spaces (indentation)
-  def removeLeadingChars(str: String) = str.filter(s => s.startsWith(space*2)).map(c => c.filter(c => c != '-' && c != ' '))
+  def removeLeadingChars(str: String) = {
+    var lines = str.split("\n")
+    val space = " "
+    lines = lines.map(c => c.filter(c => c != '-' && c != ' '))
+    lines.map(x => x ++ "\n").mkString
+  }
+  
   def extractString(str: String) = {
     if(str.startsWith("\"") && str.endsWith("\""))
       str.slice(1, str.size-1)
@@ -27,36 +33,42 @@ object parseUtils:
       str
   }
 
+  def countIndent(str: String) = {
+    var i = 0
+    for(chr <- str) {
+      if(chr == ' ') {
+        i=i+1
+      }
+    }
+    i
+  }
+
 end parseUtils
 
 
-// Defining the grammar used to parse the yaml config file
-type Scalar = String | Int
-type Mapping[A] = Map[Scalar, Node[A]]
-type Node[A] = Scalar | Mapping[A] | Array[Scalar]
 
 // 
-object yamlParser {
+object yamlParser:
   
   // Receives lines of a block and returns all lines that have the same as 
   // or higher indentation than the first string of the array
   def parseBlock(lines: Array[String]): Array[String] = {
-    def countIndent(str: String) = for chr <- str if chr == ' ' do i=i+1; i
-    val firstIndent = countIndent(lines(0))
+    val firstIndent = parseUtils.countIndent(lines(0))
     parseUtils.filterByIndent(lines, firstIndent)
   }
 
   // Handles parsing int errors
   def parseIntScalar(str: String): Option[Int] = {
-    try
+    try {
       Some(Integer.parseInt(str.trim))
-    catch
+    } catch {
       case e: Exception => None
+    }
   }
   
   // Receives a string and returns the same string or an int
   // or None if it failed to parse both
-  def parseScalar(str: String): Option[Scalar] = {
+  def parseScalar(str: String): Option[String | Int] = {
     if (parseIntScalar(str) == None) {
       Some(str)
     } else {
@@ -69,34 +81,33 @@ object yamlParser {
   // sends the rest (whether a block or a value right after the column)
   // to the list and scalar parsers to attach their result to the value,
   // if both fail then returns None
-  def parseMapping(str: String): Option[Mapping[Any]] = {
-    def countIndent(str: String) = for chr <- str if chr == ' ' do i=i+1; i
+  def parseMapping(str: String): Option[Map[String, Any]] = {
     val lines = str.split("\n")
     val filteredLines = parseBlock(lines)   
-    var finalMapping: Mapping[Any] = Map()
+    var finalMapping: Map[String, Any] = Map()
     var i = 0
-    for line <- filteredLines
-      if(countIndent(line) == countIndent(filteredLine(0)))
-    do
-      line = parseUtils.clean(line)
-      var lineParts = line.split(":")
-      if(lineParts.size == 1) {
-        val valueBlock = filteredLines.slice(i+1, filteredLines.size-1)
-        // Try passing the block to the list and mapping parsers
-        parseList(valueBlock.mkString) match {
-          case Some(list) => finalMapping += (lineParts(0), list)
-          case None => parseMapping(valueBlock.mkString) match {
-            case Some(mapping) => finalMapping += (lineParts(0), mapping)
+    for(line <- filteredLines)
+      if(parseUtils.countIndent(line) == parseUtils.countIndent(filteredLines(0))) {
+        val cleanedLine = parseUtils.clean(line)
+        var lineParts = cleanedLine.split(":")
+        if(lineParts.size == 1) {
+          val valueBlock = filteredLines.slice(i+1, filteredLines.size-1)
+          // Try passing the block to the list and mapping parsers
+          parseList(valueBlock.mkString) match {
+            case Some(list) => finalMapping + (lineParts(0) -> list)
+            case None => parseMapping(valueBlock.mkString) match {
+              case Some(mapping) => finalMapping + (lineParts(0) -> mapping)
+              case None => None
+            }
+          }
+        } else {
+          parseScalar(lineParts(1)) match {
+            case Some(value) => finalMapping + (lineParts(0) -> value)
             case None => None
           }
         }
-      } else {
-        parseScalar(lineParts(1)) match {
-          case Some(value) => finalMapping += (lineParts(0), value)
-          case None => None
-        }
+        i = i + 1
       }
-      i = i + 1
     Some(finalMapping)
   }
 
@@ -107,7 +118,7 @@ object yamlParser {
   def parseList(str: String): Option[Array[Any]] = {
     def isValidList(lines: Array[String]) = {
       var verif = true
-      for line <- lines if (!line.startsWith("-")) do verif = true
+      for(line <- lines) if (!line.startsWith("-")) then verif = true
       verif
     }
     val lines = str.split("\n")
@@ -115,12 +126,12 @@ object yamlParser {
     if (!isValidList(filteredLines))
       None
     var finalList: Array[Any] = Array()
-    for line <- filteredLines
-    do
+    for(line <- filteredLines) {
       parseScalar(parseUtils.removeLeadingChars(line)) match {
         case Some(scalar) => finalList = finalList ++ Array(scalar)
         case None => finalList = finalList ++ Array("Undefined node type")
       }
+    }
     Some(finalList)
   }
- }
+end yamlParser
