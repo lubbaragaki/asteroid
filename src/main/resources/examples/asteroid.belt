@@ -3,18 +3,21 @@ build:
 run:
   - "./a.out"
 comments:
-  single: "//"
+  single:
+    - "//"
   multiline:
     - "/*"
     - "*/"
 wordlists:
-  variable: ./path/to/list
+  - ./path/to/list
   # Can also be just the name, in that case the tool looks for it in ~/.local/share/asteroid
-  # You can specify a different list for each variable this way
-expected_output_format:
+  # You can specify a different list for each variable this way, in alphabetical order
+  # This is inconvenient yeah but the time isn't enough to figure out how to use the 
+  # yaml library
+outputs:
   # If nothing is specifyed here, asteroid defaults to an empty stdout as success
   output_name:
-    type: "stdout"
+    path: "stdout"
     format: "formatted string"
     # For example, "(( The sum of squares of %int% and %int% is: %int% ))" will just look for
     # a place in the output that matches the string between parentheses and where the '%int%'
@@ -25,7 +28,6 @@ expected_output_format:
     # except that you can specify a variable name after the parentheses with '{varname}' in
     # order to be able to give a specific wordlist to a specific variable (see above)
   other_output:
-    type: "file"
     path: ./path/to/file
     format: "(( The dog %string% ))"
     # 'The dog barked', 'The dog ate' would be valid results (ie. test successes)
