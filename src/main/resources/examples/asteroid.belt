@@ -2,14 +2,8 @@ build:
   - "make"
 run:
   - "./a.out"
-comments:
-  single:
-    - "//"
-  multiline:
-    - "/*"
-    - "*/"
 wordlists:
-  - ./path/to/list
+  variable: ./path/to/list
   # Can also be just the name, in that case the tool looks for it in ~/.local/share/asteroid
   # You can specify a different list for each variable this way, in alphabetical order
   # This is inconvenient yeah but the time isn't enough to figure out how to use the 
