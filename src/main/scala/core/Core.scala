@@ -38,7 +38,7 @@ object Template {
     lines = lines.map(line => {
       if(lineIsVariable(line)){
         val key = parseMapKey(line)
-        replaceVariable(line, key)
+        replaceVariable(line, variables(key))
       } else {
         line
       }
