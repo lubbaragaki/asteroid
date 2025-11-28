@@ -1,5 +1,6 @@
 package core
 import os.Path
+import scala.sys.process._
 
 object Prepare {
   // Receives the path to the root of the project
@@ -20,7 +21,16 @@ object Prepare {
   }
 }
 
-
+object CoreRun {
+  def buildAndRun(build: Seq[String], run: Seq[String]) = {
+    for(cmd <- build) {
+      Process(cmd)
+    }
+    for(cmd <- run) {
+      Process(cmd)
+    }
+  }
+}
 
 object Template {
   def lineIsVariable(line: String) = {

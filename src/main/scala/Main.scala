@@ -6,7 +6,7 @@ case class Output(path: String, format: String) derives YamlCodec
 case class Config(build: Seq[String], run: Seq[String], wordlists: Map[String, String], outputs: Map[String, Output]) derives YamlCodec
 
 
-object ConfigLoader {
+object Loader {
   def findRoot() = {
     val fileName = "asteroid.belt"
     val homedir = os.home
@@ -19,13 +19,22 @@ object ConfigLoader {
       case _ => Left("Error: Configuration file 'asteroid.belt' not found\nNote: asteroid looks for the file upwards from the directory it was called from")
     }
   }
+  def loadWordlists(wordlists: Map[String, Array[String]]) = {
+    val wordlistsDir = os.home / ".local/share/asteroids/wordlists"
+    var wordlistsContents: Map[String, String] = Map()
+    for(variable <- wordlists.keys.toArray) {
+      wordlistsContents += (variable -> os.read(wordlistsDir / wordlists(variable)).split('\n'))
+    }
+    wordlistsContents
+  }
 }
 
 object Main {
   def main(args: Array[String]): Unit = {
     var dir: Path = os.pwd
     var file: String = ""
-    ConfigLoader.findRoot() match {
+    val wordlists = Loader.loadWordlists
+    Loader.findRoot() match {
       case Right(fileContents, dirname) => dir = dirname; file = fileContents
       case Left(errorString) => {
         println(errorString)
