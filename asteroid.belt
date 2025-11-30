@@ -1,0 +1,10 @@
+build:
+  - ""
+run:
+  - "python test.py"
+wordlists:
+  num: numbers
+# The files in which there are variables ot be replaced (order is irrelevant)
+# Must be a path relative to the project root, without a leading or ending '/'
+files:
+  - test.py

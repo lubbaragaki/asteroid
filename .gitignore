@@ -1,5 +1,6 @@
 ## Sbt
 dist/*
+.sbtopts
 target/
 lib_managed/
 src_managed/
@@ -33,3 +34,6 @@ Sessionx.vim
 tags
 # Persistent undo
 [._]*.un~
+
+# Other
+.env

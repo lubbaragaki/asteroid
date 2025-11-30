@@ -6,4 +6,4 @@ libraryDependencies ++= Seq(
         "org.virtuslab" %% "scala-yaml" % "0.3.1",
         "com.lihaoyi" %% "os-lib" % "0.11.6"
 )
-addCommandAlias("ci","compile;test;run")
+Compile / mainClass := Some("Main")

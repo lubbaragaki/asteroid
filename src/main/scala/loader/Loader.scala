@@ -1,6 +1,5 @@
 package loader
 import org.virtuslab.yaml.*
-import core.Prepare
 import os.Path
 
 object Loader {
@@ -21,8 +20,8 @@ object Loader {
 
   // Recursively delete the .asteroid directory
   // situated at the project root
-  def clean(projectRoot: String) = {
-    
+  def clean(projectRoot: Path) = {
+    os.remove.all(projectRoot / ".asteroid", true)
   }
 
   // Find the root directory of the project
@@ -36,8 +35,8 @@ object Loader {
       workdir = workdir / os.up
     }
     workdir match {
-      case homedir => Left("Error: Configuration file 'asteroid.belt' not found\nNote: asteroid looks for the file upwards from the directory it was called from")
-      case _ => Right(workdir)
+      case homedir => Right(workdir)
+      case _ =>  Left("Error: Configuration file 'asteroid.belt' not found\nNote: asteroid looks for the file upwards from the directory it was called from")
     }
   }
 
@@ -45,7 +44,7 @@ object Loader {
   // and returns a mapping from variables to wordlist contents
   // in the form of an array of string
   def loadWordlists(wordlists: Map[String, String]) = {
-    val wordlistsDir = os.home / ".local/share/asteroids/wordlists"
+    val wordlistsDir = os.home / ".local/share/asteroid/wordlists"
     var wordlistsContents: Map[String, Array[String]] = Map()
     for(variable <- wordlists.keys.toArray) {
       wordlistsContents += (variable -> os.read(wordlistsDir / wordlists(variable)).split('\n'))
