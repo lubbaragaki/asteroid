@@ -19,6 +19,7 @@ The configuration is based on yaml syntax. The fields are:
 - `run`: a list of commands to run the target program at each new iteration. Note that both build and run comands are executed sequentially, so you can leave either one of them with a single empty string element and the other one will execute the given commands
 - `wordlists`: a mapping of variable names and wordlists. Asteroid looks for wordlists in ~/.local/share. The variable names must be the same as the one between curly braces in the template lines, and there shouldn't be more or less wordlists than there are variables
 - `files`: a list of the files that contain template variables. This is to avoid looking through all the filetree of the project at each iteration, making it considerably faster
-See (example)[asteroid.belt]
+See [[asteroid.belt](https://github.com/lubbaragaki/asteroid/blob/main/asteroid.belt)]
+
 
 
