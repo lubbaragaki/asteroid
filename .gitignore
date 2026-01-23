@@ -37,3 +37,6 @@ tags
 
 # Other
 .env
+.devenv
+.envrc
+.devenv.flake.nix
