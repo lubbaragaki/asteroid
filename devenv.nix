@@ -7,7 +7,7 @@
 {
   # https://devenv.sh/packages/
   packages = [
-    pkgs.lua
+  	pkgs.scala-cli
   ];
 
   # https://devenv.sh/languages/
@@ -18,6 +18,8 @@
     };
     scala.enable = true;
   };
+
+  dotenv.disableHint = true;
 
   # See full reference at https://devenv.sh/reference/options/
 }

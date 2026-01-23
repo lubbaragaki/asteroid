@@ -1,8 +1,20 @@
+//import org.virtuslab.yaml.*
+//import core.Template
+//import os.Path
+//
+//> using scala 3.3.6
+//> using dep com.lihaoyi::os-lib:0.11.6
+//> using dep org.virtuslab::scala-yaml:0.3.1
+//> using dep org.luaj:luaj-jse:3.0.1
+//> using dep com.lihaoyi::fansi:0.5.1
+//> using file "./Loader.scala"
+//> using file "./Core.scala"
+
+import os.*
 import org.virtuslab.yaml.*
-import core.CoreRun
-import core.Template
-import os.Path
+import fansi.Color
 import loader.Loader
+import core.CoreRun
 
 case class Config(build: Seq[String], run: Seq[String], wordlists: Map[String, String], files: Seq[String]) derives YamlCodec
 

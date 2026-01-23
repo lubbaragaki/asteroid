@@ -1,10 +1,15 @@
 package core
-import os.Path
-import os._
-import scala.sys.process._
-import fansi._
-import scala.sys.process._
+//import os.Path
+//import os._
+//import fansi._
 import collection.mutable.StringBuilder
+
+//> using dep com.lihaoyi::os-lib:0.11.6
+//> using dep org.luaj:luaj-jse:3.0.1
+//> using dep com.lihaoyi::fansi:0.5.1
+
+import os.*
+import fansi.*
 
 object CoreRun {
 
