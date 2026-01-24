@@ -40,10 +40,7 @@ object Loader {
     while(workdir != homedir && !os.exists(workdir / fileName)) {
       workdir = workdir / os.up
     }
-    workdir match {
-      case homedir => Right(workdir)
-      case _ =>  Left("Error: Configuration file 'asteroid.belt' not found\nNote: asteroid looks for the file upwards from the directory it was called from")
-    }
+    workdir // Returns the found root directory, doesn't handle it
   }
 
   // Receives a mapping from variable names to wordlist names

@@ -20,13 +20,13 @@ case class Config(build: Seq[String], run: Seq[String], wordlists: Map[String, S
 
 object Main {
 
-  def getRoot() = {
-    Loader.findRoot() match {
-      case Right(dirname) => dirname
-      case Left(errorString) => {
-        println(errorString)
+  def getRoot(): Path = {
+    val rootDir = Loader.findRoot()
+    if(!os.exists(rootDir / "asteroid.belt")) {
+        println("'asteroid.belt' configuration file not found:\nAdd it to the root of your project and run asteroid from there or from that directory or one of its subdirectories")
         sys.exit(1)
-      }
+    } else {
+        rootDir
     }
   }
 

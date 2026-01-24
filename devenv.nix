@@ -20,6 +20,16 @@
   };
 
   dotenv.disableHint = true;
+  
+  enterShell = ''
+  	source .env
+	astrun() {
+		scala-cli run $SRC_DIR
+	}
+	astcomp() {
+		scala-cli compile $SRC_DIR
+	}
+  '';
 
   # See full reference at https://devenv.sh/reference/options/
 }
