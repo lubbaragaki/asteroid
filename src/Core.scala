@@ -31,7 +31,7 @@ object CoreRun {
     result
   }
 
-  //TODO A function that takes a mapping of variables and replaces
+  // A function that takes a mapping of variables and replaces
   // the variables in the file with their values
   def mainProc(files: Seq[String], projRoot: Path, variables: Array[Map[String, String]], build: Seq[String], run: Seq[String]) = {
     val root = projRoot / ".asteroid"
@@ -41,12 +41,17 @@ object CoreRun {
           val content = os.read(projRoot / file)
           val newContent = Template.templater(content, combination)
           os.write.over(root / file, newContent)
-          val result = buildAndRun(root, build, run)
-          if(result.exitCode == 0) 
-            println(s"${Color.Green(s"Success [Attempt (${i})]:")}\n${result.out.text()}")
-          else
-            println(s"${Color.Red(s"Failure [Attempt (${i})]:")}\n\"\"\"\n${result.err.text()}\"\"\"")
         }
+        println("----------------------")
+        val result = buildAndRun(root, build, run)
+        if(result.exitCode == 0) 
+          println(s"${Color.Yellow("Input: ")}${combination}")
+          println(s"${Color.Yellow("Output: ")}${result.out.text()}")
+          println(s"${Color.Green(s"Success [Attempt (${i})]:")}")
+        else
+          println(s"${Color.Yellow("Input: ")}${combination}")
+          println(s"${Color.Yellow("Output: ")}${result.err.text()}\n\"\"\"")
+          println(s"${Color.Red(s"Failure [Attempt (${i})]:")}\n\"\"\"")
         i = i + 1
       }
   }
