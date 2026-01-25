@@ -35,8 +35,10 @@ object CoreRun {
   // the variables in the file with their values
   def mainProc(files: Seq[String], projRoot: Path, variables: Array[Map[String, String]], build: Seq[String], run: Seq[String]) = {
     val root = projRoot / ".asteroid"
-    var i = 1
+    var i = 0
+    var succ = 0
       for(combination <- variables) {
+        i = i + 1
         for(file <- files) {
           val filePath = os.RelPath(file)
           val content = os.read(projRoot / filePath)
@@ -46,15 +48,18 @@ object CoreRun {
         println("----------------------")
         val result = buildAndRun(root, build, run)
         if(result.exitCode == 0) 
-          println(s"${Color.Green(s"Success [Attempt (${i})]:")}")
+          println(s"${Color.Green(s"Success [Attempt ${i}]:")}")
           println(s"${Color.Yellow("Input: ")}${combination}")
           println(s"${Color.Yellow("Output: ")}${result.out.text()}")
+          succ = succ + 1
         else
-          println(s"${Color.Red(s"Failure [Attempt (${i})]:")}\n\"\"\"")
+          println(s"${Color.Red(s"Failure [Attempt ${i}]:")}")
           println(s"${Color.Yellow("Input: ")}${combination}")
-          println(s"${Color.Yellow("Output: ")}${result.err.text()}\n\"\"\"")
-        i = i + 1
+          println(s"${Color.Yellow("Output: ")}\n\"\"\"\n${result.err.text()}\n\"\"\"")
       }
+      println("======================")
+      val finRes = if(succ == i) then Color.Green(s"${succ}/${i}") else Color.Red(s"${succ}/${i}")
+      println(s"${Color.Yellow("Results: ")}${finRes}")
   }
 
   def getCombinations(wordlists: Map[String,Array[String]]) = {
@@ -84,7 +89,6 @@ object CoreRun {
     getCombinationsWorker(arrayOfArraysOfTuples).map(x => x.toMap)
 
   }
-
 }
 
 object Template {
