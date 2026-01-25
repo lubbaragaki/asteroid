@@ -38,20 +38,21 @@ object CoreRun {
     var i = 1
       for(combination <- variables) {
         for(file <- files) {
-          val content = os.read(projRoot / file)
+          val filePath = os.RelPath(file)
+          val content = os.read(projRoot / filePath)
           val newContent = Template.templater(content, combination)
-          os.write.over(root / file, newContent)
+          os.write.over(root / filePath, newContent)
         }
         println("----------------------")
         val result = buildAndRun(root, build, run)
         if(result.exitCode == 0) 
+          println(s"${Color.Green(s"Success [Attempt (${i})]:")}")
           println(s"${Color.Yellow("Input: ")}${combination}")
           println(s"${Color.Yellow("Output: ")}${result.out.text()}")
-          println(s"${Color.Green(s"Success [Attempt (${i})]:")}")
         else
+          println(s"${Color.Red(s"Failure [Attempt (${i})]:")}\n\"\"\"")
           println(s"${Color.Yellow("Input: ")}${combination}")
           println(s"${Color.Yellow("Output: ")}${result.err.text()}\n\"\"\"")
-          println(s"${Color.Red(s"Failure [Attempt (${i})]:")}\n\"\"\"")
         i = i + 1
       }
   }
