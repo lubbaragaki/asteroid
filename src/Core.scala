@@ -10,6 +10,7 @@ import collection.mutable.StringBuilder
 
 import os.*
 import fansi.*
+import loader.Loader
 
 object CoreRun {
 
@@ -41,6 +42,11 @@ object CoreRun {
         i = i + 1
         for(file <- files) {
           val filePath = os.RelPath(file)
+          if(!os.exists(root / filePath)) {
+            println(s"'${file}' file not found:\nMake sure the files mentioned in your yaml configuration start at the root of the project (where 'asteroid.bel' is placed)")
+            Loader.clean(root)
+            sys.exit(1)
+          }
           val content = os.read(projRoot / filePath)
           val newContent = Template.templater(content, combination)
           os.write.over(root / filePath, newContent)
