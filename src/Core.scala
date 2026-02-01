@@ -34,7 +34,7 @@ object CoreRun {
 
   // A function that takes a mapping of variables and replaces
   // the variables in the file with their values
-  def mainProc(files: Seq[String], projRoot: Path, variables: Array[Map[String, String]], build: Seq[String], run: Seq[String]) = {
+  def mainProc(files: Seq[String], projRoot: Path, variables: Array[Map[String, String]], build: Seq[String], run: Seq[String], scripts: Option[Map[String, String]]) = {
     val root = projRoot / ".asteroid"
     var i = 0
     var succ = 0
