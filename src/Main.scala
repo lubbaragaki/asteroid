@@ -16,7 +16,7 @@ import fansi.Color
 import loader.Loader
 import core.CoreRun
 
-case class Config(build: Seq[String], run: Seq[String], wordlists: Map[String, String], scripts: Option[Map[String, String]], files: Seq[String]) derives YamlCodec
+case class Config(build: Seq[String], run: Seq[String], wordlists: Map[String, String], script: Option[String], files: Seq[String]) derives YamlCodec
 
 object Main {
 
@@ -47,7 +47,7 @@ object Main {
     Loader.replicateDirectory(rootDir)
     val wordlists = Loader.loadWordlists(config.wordlists)
     val combinations = CoreRun.getCombinations(wordlists)
-    CoreRun.mainProc(config.files, rootDir, combinations, config.build, config.run, config.scripts)
+    CoreRun.mainProc(config.files, rootDir, combinations, config.build, config.run, config.script)
     Loader.clean(rootDir)
 
   }

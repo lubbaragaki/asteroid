@@ -7,10 +7,12 @@ import collection.mutable.StringBuilder
 //> using dep com.lihaoyi::os-lib:0.11.6
 //> using dep org.luaj:luaj-jse:3.0.1
 //> using dep com.lihaoyi::fansi:0.5.1
+//> using file "./Lua.scala"
 
 import os.*
 import fansi.*
 import loader.Loader
+import lua.Lua
 
 object CoreRun {
 
@@ -34,7 +36,7 @@ object CoreRun {
 
   // A function that takes a mapping of variables and replaces
   // the variables in the file with their values
-  def mainProc(files: Seq[String], projRoot: Path, variables: Array[Map[String, String]], build: Seq[String], run: Seq[String], scripts: Option[Map[String, String]]) = {
+  def mainProc(files: Seq[String], projRoot: Path, variables: Array[Map[String, String]], build: Seq[String], run: Seq[String], script: Option[String]) = {
     val root = projRoot / ".asteroid"
     var i = 0
     var succ = 0
@@ -53,7 +55,12 @@ object CoreRun {
         }
         println("----------------------")
         val result = buildAndRun(root, build, run)
-        if(result.exitCode == 0) 
+        //if script exists -> outcode = runscript
+        val outcode = script match {
+          case Some(scriptname) => Lua.runScript(scriptname, result.out.text())
+          case None => result.exitCode
+        }
+        if(outcode == 0) 
           println(s"${Color.Green(s"Success [Attempt ${i}]:")}")
           println(s"${Color.Yellow("Input: ")}${combination}")
           println(s"${Color.Yellow("Output: ")}${result.out.text()}")

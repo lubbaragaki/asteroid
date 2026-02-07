@@ -1,3 +1,5 @@
+package lua
+
 //> using scala 3.3.6
 //> using dep com.lihaoyi::os-lib:0.11.6
 //> using dep org.virtuslab::scala-yaml:0.3.1

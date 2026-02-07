@@ -1,0 +1,10 @@
+build:
+  - ""
+run:
+  - "python src/test.py"
+wordlists:
+  n1: numbers
+  n2: numbers
+script: "scripts/script.lua"
+files:
+  - src/test.py
