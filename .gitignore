@@ -1,0 +1,11 @@
+## Scala
+*.class
+*.log
+.bsp
+.scala-build
+
+# Other
+.env
+.devenv
+.envrc
+.devenv.flake.nix

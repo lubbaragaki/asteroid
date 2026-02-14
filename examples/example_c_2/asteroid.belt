@@ -1,0 +1,9 @@
+build:
+  - "gcc src/main.c"
+run:
+  - "./a.out"
+wordlists:
+  path: paths
+script: scripts/script.lua
+files:
+  - src/main.c
