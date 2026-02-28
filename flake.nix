@@ -20,6 +20,12 @@
           nativeBuildInputs = [ pkgs.scala-cli pkgs.makeWrapper ];
           buildInputs = [ pkgs.jre ];
 
+          preBuild = ''
+            export HOME=$TMPDIR
+            export JAVA_TMPDIR=$TMPDIR
+            export _JAVA_OPTIONS="-Duser.home=$TMPDIR -Djava.io.tmpdir=$TMPDIR"
+          '';
+
           buildPhase = ''
             runHook preBuild
             scala-cli --power package src --assembly -o asteroid.jar -f
