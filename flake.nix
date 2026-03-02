@@ -12,49 +12,32 @@
     in
     {
       packages.${system} = {
-        default = pkgs.stdenv.mkDerivation {
+        default = pkgs.stdenvNoCC.mkDerivation {
           pname = "asteroid";
           version = "0.1.0";
-          src = self;
+          src = builtins.fetchurl {
+	       url = "https://github.com/lubbaragaki/asteroid/releases/download/1.0/asteroid.jar";
+               sha256 = "8191f1ba950a5fba62216fc6695ba7e5d9f4b34a39cd83db70071b6ef7bc0413";
+	    };
+          dontUnpack=true;
 
-          nativeBuildInputs = [ pkgs.scala-cli pkgs.makeWrapper ];
-          buildInputs = [ pkgs.jre ];
-
-          buildPhase = ''
-            runHook preBuild
-            scala-cli --power package src --assembly -o asteroid.jar -f
-            runHook postBuild
-          '';
+          buildInputs = [ pkgs.makeWrapper pkgs.jre ];
 
           installPhase = ''
             runHook preInstall
             mkdir -p $out/{lib,bin}
-            cp asteroid.jar $out/lib/
+            cp $src $out/lib/
             
             makeWrapper ${pkgs.jre}/bin/java $out/bin/asteroid \
-              --add-flags "-jar $out/lib/asteroid.jar"
+              --add-flags "-jar $out/lib/*-asteroid.jar"
             runHook postInstall
           '';
 
           meta = with pkgs.lib; {
             description = "Asteroid Scala application";
-            license = licenses.unfree;  # Adjust as needed
             platforms = platforms.linux;
           };
         };
-      };
-
-      # For use in NixOS configuration
-      overlays.default = final: prev: {
-        asteroid = self.packages.${system}.default;
-      };
-
-      # Dev shell for working on the project
-      devShells.${system}.default = pkgs.mkShell {
-        buildInputs = with pkgs; [
-          scala-cli
-          jdk
-        ];
       };
     };
 }

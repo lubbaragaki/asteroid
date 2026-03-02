@@ -1,0 +1,1 @@
+scala-cli --power package src --assembly -o asteroid.jar -f
