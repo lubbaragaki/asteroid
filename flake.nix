@@ -11,6 +11,9 @@
       pkgs = nixpkgs.legacyPackages.${system};
     in
     {
+	devShells.${system}.default = pkgs.mkShell {
+	  packages = [ self.packages.${system}.default ];
+	};
       packages.${system} = {
         default = pkgs.stdenvNoCC.mkDerivation {
           pname = "asteroid";
