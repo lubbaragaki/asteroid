@@ -11,9 +11,14 @@
       pkgs = nixpkgs.legacyPackages.${system};
     in
     {
-	devShells.${system}.default = pkgs.mkShell {
-	  packages = [ self.packages.${system}.default ];
-	};
+	devShells.${system} = {
+          default = pkgs.mkShell {
+	    packages = [ self.packages.${system}.default ];
+	  };
+	  devenv = pkgs.mkShell {
+	    packages = [ pkgs.scala-cli ];
+	  };
+        };
       packages.${system} = {
         default = pkgs.stdenvNoCC.mkDerivation {
           pname = "asteroid";
