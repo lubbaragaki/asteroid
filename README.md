@@ -2,7 +2,7 @@
 
 Asteroid is a simple, language-agnostic cli fuzz-testing tool for software. It uses templating and a yaml configuration file, allowing you to combine multiple variables and get varied results. Its purpose is helping you find ege cases in your code without going to the trouble of setting up a random test generating module yourself.
 
-![demo](https://github.com/lubbaragaki/asteroid/blob/main/src/main/resources/demo.gif)
+![demo](resources/demo.gif)
 
 # Installation
 On NixOS or if you're using the nix package manager, you can simply run:
